@@ -1,0 +1,2 @@
+INSERT INTO roles_authorities (role_id, authority_id) VALUES ('613bb9f1-1607-4f8d-8cd2-f08217d60829', '6a56758f-b66b-45ac-b3ee-39755db821a6');
+INSERT INTO roles_authorities (role_id, authority_id) VALUES ('613bb9f1-1607-4f8d-8cd2-f08217d60829', 'ecadf000-0580-4d4f-88e7-02803e6475e9');
