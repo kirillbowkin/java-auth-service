@@ -37,28 +37,31 @@ public class AuthController {
                             .setRoles(Collections.singletonList(role))
             );
 
-            return new ResponseEntity<>(
-                    new RegisterResponseDto()
-                            .setUser(savedUser)
-                            .setStatus(ResponseStatus.SUCCESS)
-                            .setPath("/api/auth/v1/register")
-                            .setTimestamp(LocalDateTime.now())
-                    , HttpStatus.OK
-            );
+            return ResponseEntity
+                    .ok()
+                    .body(
+                            new RegisterResponseDto()
+                                    .setUser(savedUser)
+                                    .setStatus(ResponseStatus.SUCCESS)
+                                    .setPath("/api/auth/v1/register")
+                                    .setTimestamp(LocalDateTime.now())
+                    );
         } catch (Exception e) {
-            return new ResponseEntity<>(
-                    new ErrorResponseDto()
-                            .setErrors(new ArrayList<>() {{
-                                add(new HashMap<>() {{
-                                    put("Код", "228");
-                                    put("Сообщение", "Ты хуй");
-                                }});
-                            }})
-                            .setStatus(ResponseStatus.ERROR)
-                            .setPath("/api/auth/v1/register")
-                            .setTimestamp(LocalDateTime.now())
-                    , HttpStatus.BAD_REQUEST
-            );
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            //TODO: Implement ErrorService
+                            new ErrorResponseDto()
+                                    .setErrors(new ArrayList<>() {{
+                                        add(new HashMap<>() {{
+                                            put("Код", "228");
+                                            put("Сообщение", "Ты хуй");
+                                        }});
+                                    }})
+                                    .setStatus(ResponseStatus.ERROR)
+                                    .setPath("/api/auth/v1/register")
+                                    .setTimestamp(LocalDateTime.now())
+                    );
         }
 
     }
