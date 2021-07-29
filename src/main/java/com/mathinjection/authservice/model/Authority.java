@@ -22,8 +22,5 @@ public class Authority {
     @Column(name = "name")
     private String name;
 
-    @JsonIgnore
-    @ManyToMany(mappedBy = "authorities", fetch = FetchType.LAZY)
-    private Collection<Role> roles;
 
 }
