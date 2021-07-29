@@ -5,9 +5,16 @@ import com.mathinjection.authservice.model.Role;
 import com.mathinjection.authservice.model.User;
 import com.mathinjection.authservice.repository.RoleRepository;
 import com.mathinjection.authservice.service.UserService;
+import com.mathinjection.authservice.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +31,9 @@ public class AuthController {
     private final UserService userService;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final UserDetailsService userDetailsService;
+    private final JwtUtil jwtUtil;
 
     @PostMapping("register")
     public ResponseEntity<? extends BaseResponseDto> register(@RequestBody RegisterReqDto regReqDto) {
@@ -64,5 +74,27 @@ public class AuthController {
                     );
         }
 
+    }
+
+    @PostMapping("authenticate")
+    public ResponseEntity<? extends BaseResponseDto> authenticate(@RequestBody AuthenticationReqDto authReqDto) throws Exception {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authReqDto.getUsername(), authReqDto.getPassword()));
+        } catch (BadCredentialsException e) {
+            throw new Exception("Incorrect username or password", e);
+        }
+
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(authReqDto.getUsername());
+        final Map<String, String> tokens = jwtUtil.generateTokens(userDetails.getUsername(), userDetails.getAuthorities());
+
+        return ResponseEntity
+                .ok()
+                .body(
+                        new AuthResponseDto()
+                                .setTokens(tokens)
+                                .setPath("/api/auth/v1/authenticate")
+                                .setTimestamp(LocalDateTime.now())
+                                .setStatus(ResponseStatus.SUCCESS)
+                );
     }
 }
