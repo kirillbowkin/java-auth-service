@@ -84,7 +84,27 @@ public class AuthController {
             throw new Exception("Incorrect username or password", e);
         }
 
+        //TODO: Refactor
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authReqDto.getUsername());
+        final Map<String, String> tokens = jwtUtil.generateTokens(userDetails.getUsername(), userDetails.getAuthorities());
+
+        return ResponseEntity
+                .ok()
+                .body(
+                        new AuthResponseDto()
+                                .setTokens(tokens)
+                                .setPath("/api/auth/v1/authenticate")
+                                .setTimestamp(LocalDateTime.now())
+                                .setStatus(ResponseStatus.SUCCESS)
+                );
+    }
+
+    @PostMapping("refresh")
+    public ResponseEntity<? extends BaseResponseDto> refresh(@RequestBody RefreshReqDto refreshReqDto) throws Exception {
+        String username = jwtUtil.getSubject(refreshReqDto.getRefreshToken());
+
+        //TODO: Refactor
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         final Map<String, String> tokens = jwtUtil.generateTokens(userDetails.getUsername(), userDetails.getAuthorities());
 
         return ResponseEntity
