@@ -6,7 +6,9 @@ import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
 
-@Schema(type = "object", name = "Response super class", subTypes = {RegisterResponseDto.class, ErrorResponseDto.class})
+@Schema(type = "object", name = "Response super class", subTypes = {
+        RegisterResponseDto.class, ErrorResponseDto.class, AuthenticationReqDto.class, AuthResponseDto.class
+})
 @Data
 @Accessors(chain = true)
 public abstract class BaseResponseDto {
