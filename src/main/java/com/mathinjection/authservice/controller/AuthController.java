@@ -6,6 +6,10 @@ import com.mathinjection.authservice.model.User;
 import com.mathinjection.authservice.repository.RoleRepository;
 import com.mathinjection.authservice.service.UserService;
 import com.mathinjection.authservice.util.JwtUtil;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +40,11 @@ public class AuthController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("register")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",description = "OK", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = RegisterResponseDto.class))}),
+            @ApiResponse(responseCode = "400",description = "BAD_REQUEST",content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDto.class))}),
+
+    })
     public ResponseEntity<? extends BaseResponseDto> register(@RequestBody RegisterReqDto regReqDto) {
         try {
             Role role = roleRepository.findRoleByName("ROLE_USER").orElse(null);
@@ -77,6 +86,11 @@ public class AuthController {
     }
 
     @PostMapping("authenticate")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",description = "OK", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AuthResponseDto.class))}),
+            @ApiResponse(responseCode = "400",description = "BAD_REQUEST",content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDto.class))}),
+
+    })
     public ResponseEntity<? extends BaseResponseDto> authenticate(@RequestBody AuthenticationReqDto authReqDto) throws Exception {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authReqDto.getUsername(), authReqDto.getPassword()));
@@ -100,6 +114,11 @@ public class AuthController {
     }
 
     @PostMapping("refresh")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",description = "OK", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AuthResponseDto.class))}),
+            @ApiResponse(responseCode = "400",description = "BAD_REQUEST",content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDto.class))}),
+
+    })
     public ResponseEntity<? extends BaseResponseDto> refresh(@RequestBody RefreshReqDto refreshReqDto) throws Exception {
         String username = jwtUtil.getSubject(refreshReqDto.getRefreshToken());
 
