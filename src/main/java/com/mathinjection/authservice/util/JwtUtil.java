@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class JwtUtil {
+    //TODO: Extract secret_key in env variable
     private String secret_key = "SECRET";
     private Algorithm algorithm = Algorithm.HMAC256(secret_key.getBytes());
     private JWTVerifier verifier = JWT.require(algorithm).build();

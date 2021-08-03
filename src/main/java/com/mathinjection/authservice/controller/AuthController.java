@@ -6,6 +6,7 @@ import com.mathinjection.authservice.model.User;
 import com.mathinjection.authservice.repository.RoleRepository;
 import com.mathinjection.authservice.service.UserService;
 import com.mathinjection.authservice.util.JwtUtil;
+import com.mathinjection.authservice.util.validators.RegisterReqDtoValidator;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,11 +21,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -38,6 +41,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
+    private final RegisterReqDtoValidator registerReqDtoValidator;
 
     @PostMapping("register")
     @ApiResponses(value = {
@@ -46,6 +50,20 @@ public class AuthController {
 
     })
     public ResponseEntity<? extends BaseResponseDto> register(@RequestBody RegisterReqDto regReqDto) {
+
+        List<Map<String, String>> errors = registerReqDtoValidator.validate(regReqDto);
+        if (!errors.isEmpty()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            new ErrorResponseDto()
+                                    .setErrors(errors)
+                                    .setStatus(ResponseStatus.ERROR)
+                                    .setPath("/api/auth/v1/register")
+                                    .setTimestamp(LocalDateTime.now())
+                    );
+        }
+
         try {
             Role role = roleRepository.findRoleByName("ROLE_USER").orElse(null);
             User savedUser = userService.save(
@@ -73,8 +91,8 @@ public class AuthController {
                             new ErrorResponseDto()
                                     .setErrors(new ArrayList<>() {{
                                         add(new HashMap<>() {{
-                                            put("Код", "228");
-                                            put("Сообщение", "Ты хуй");
+                                            put("error", "registration error");
+                                            put("message", e.getMessage());
                                         }});
                                     }})
                                     .setStatus(ResponseStatus.ERROR)
@@ -95,7 +113,20 @@ public class AuthController {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authReqDto.getUsername(), authReqDto.getPassword()));
         } catch (BadCredentialsException e) {
-            throw new Exception("Incorrect username or password", e);
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            new ErrorResponseDto()
+                                    .setErrors(new ArrayList<>() {{
+                                        add(new HashMap<>(){{
+                                            put("error", "bad credentials");
+                                            put("message", "incorrect username or password");
+                                        }});
+                                    }})
+                                    .setStatus(ResponseStatus.ERROR)
+                                    .setPath("/api/auth/v1/register")
+                                    .setTimestamp(LocalDateTime.now())
+                    );
         }
 
         //TODO: Refactor
