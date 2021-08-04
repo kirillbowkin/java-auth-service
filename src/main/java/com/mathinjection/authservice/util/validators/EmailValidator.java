@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class EmailValidator implements CustomValidator<String> {
 
-    private final String emailPattern = "^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$";
+    private final String emailPattern = "(?=.{3,50}$)^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$";
     private final UserService userService;
 
     @Override
