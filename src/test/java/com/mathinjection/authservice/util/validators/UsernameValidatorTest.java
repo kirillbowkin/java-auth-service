@@ -55,9 +55,11 @@ class UsernameValidatorTest {
     public void ShouldNotRejectUsernameIfItPersistsInDB() {
         when(userService.findByUsername(anyString())).thenThrow(new UsernameNotFoundException(""));
 
-        assertFalse(usernameValidator.validate("whatever").stream().anyMatch(
-                error -> error.containsKey("error") && error.get("error").equals("invalid username")
-                        && error.containsKey("message") && error.get("message").equals("user with this username already exists")
+        Predicate<Map<String, String>> usernameInDbPredicate = error -> error.containsKey("error") && error.get("error").equals("invalid username")
+                && error.containsKey("message") && error.get("message").equals("user with this username already exists");
+
+
+        assertFalse(usernameValidator.validate("whatever").stream().anyMatch(usernameInDbPredicate
         ));
     }
 
@@ -91,17 +93,17 @@ class UsernameValidatorTest {
     public void ShouldFailIfMatchesPatterButInDb() {
         when(userService.findByUsername(anyString())).thenReturn(new User());
 
-        Predicate<Map<String, String>> patternNotMatchPredicate = error -> error.containsKey("error") && error.get("error").equals("invalid username")
+        Predicate<Map<String, String>> usernameInDbPredicate = error -> error.containsKey("error") && error.get("error").equals("invalid username")
                 && error.containsKey("message") && error.get("message").equals("user with this username already exists");
 
-        assertTrue(usernameValidator.validate("aaa").stream().anyMatch(patternNotMatchPredicate));
-        assertTrue(usernameValidator.validate("aaaaaaaaaaaaaaaa").stream().anyMatch(patternNotMatchPredicate));
-        assertTrue(usernameValidator.validate("111").stream().anyMatch(patternNotMatchPredicate));
-        assertTrue(usernameValidator.validate("1111111111111111").stream().anyMatch(patternNotMatchPredicate));
-        assertTrue(usernameValidator.validate("---").stream().anyMatch(patternNotMatchPredicate));
-        assertTrue(usernameValidator.validate("----------------").stream().anyMatch(patternNotMatchPredicate));
-        assertTrue(usernameValidator.validate("___").stream().anyMatch(patternNotMatchPredicate));
-        assertTrue(usernameValidator.validate("________________").stream().anyMatch(patternNotMatchPredicate));
+        assertTrue(usernameValidator.validate("aaa").stream().anyMatch(usernameInDbPredicate));
+        assertTrue(usernameValidator.validate("aaaaaaaaaaaaaaaa").stream().anyMatch(usernameInDbPredicate));
+        assertTrue(usernameValidator.validate("111").stream().anyMatch(usernameInDbPredicate));
+        assertTrue(usernameValidator.validate("1111111111111111").stream().anyMatch(usernameInDbPredicate));
+        assertTrue(usernameValidator.validate("---").stream().anyMatch(usernameInDbPredicate));
+        assertTrue(usernameValidator.validate("----------------").stream().anyMatch(usernameInDbPredicate));
+        assertTrue(usernameValidator.validate("___").stream().anyMatch(usernameInDbPredicate));
+        assertTrue(usernameValidator.validate("________________").stream().anyMatch(usernameInDbPredicate));
 
     }
 
