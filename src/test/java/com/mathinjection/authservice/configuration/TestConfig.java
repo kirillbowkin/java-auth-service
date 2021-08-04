@@ -1,6 +1,7 @@
 package com.mathinjection.authservice.configuration;
 
 import com.mathinjection.authservice.service.UserService;
+import com.mathinjection.authservice.util.validators.PasswordValidator;
 import com.mathinjection.authservice.util.validators.UsernameValidator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,9 @@ public class TestConfig {
     public UsernameValidator usernameValidator() {
         return new UsernameValidator(userService());
     }
+
+    @Bean
+    public PasswordValidator passwordValidator() { return new PasswordValidator(); }
 
     @Bean
     public UserService userService() {

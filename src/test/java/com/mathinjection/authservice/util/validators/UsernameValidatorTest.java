@@ -44,8 +44,8 @@ class UsernameValidatorTest {
         when(userService.findByUsername(username)).thenReturn(new User());
 
         assertTrue(usernameValidator.validate(username).stream().anyMatch(
-                errors -> errors.containsKey("error") && errors.get("error").equals("invalid username")
-                        && errors.containsKey("message") && errors.get("message").equals("user with this username already exists")
+                error -> error.containsKey("error") && error.get("error").equals("invalid username")
+                        && error.containsKey("message") && error.get("message").equals("user with this username already exists")
         ));
 
     }
@@ -56,8 +56,8 @@ class UsernameValidatorTest {
         when(userService.findByUsername(anyString())).thenThrow(new UsernameNotFoundException(""));
 
         assertFalse(usernameValidator.validate("whatever").stream().anyMatch(
-                errors -> errors.containsKey("error") && errors.get("error").equals("invalid username")
-                        && errors.containsKey("message") && errors.get("message").equals("user with this username already exists")
+                error -> error.containsKey("error") && error.get("error").equals("invalid username")
+                        && error.containsKey("message") && error.get("message").equals("user with this username already exists")
         ));
     }
 
@@ -66,12 +66,13 @@ class UsernameValidatorTest {
     public void ShouldFailIfUsernameNotMatchesPattern() {
         when(userService.findByUsername(anyString())).thenThrow(new UsernameNotFoundException(""));
 
-        Predicate<Map<String, String>> patternNotMatchPredicate = errors -> errors.containsKey("error") && errors.get("error").equals("invalid username")
-                && errors.containsKey("message") && errors.get("message").equals("username must be: from 3 to 16, may include lowercase, numbers, '-', '_'");
+        Predicate<Map<String, String>> patternNotMatchPredicate = error -> error.containsKey("error") && error.get("error").equals("invalid username")
+                && error.containsKey("message") && error.get("message").equals("username must be: from 3 to 16, may include lowercase, numbers, '-', '_'");
 
-        Predicate<Map<String, String>> usernameIsNullPredicate = errors -> errors.containsKey("error") && errors.get("error").equals("username is obligatory")
-                && errors.containsKey("message") && errors.get("message").equals("username is obligatory");
+        Predicate<Map<String, String>> usernameIsNullPredicate = error -> error.containsKey("error") && error.get("error").equals("username is obligatory")
+                && error.containsKey("message") && error.get("message").equals("username is obligatory");
 
+        assertTrue(usernameValidator.validate("").stream().anyMatch(patternNotMatchPredicate));
         assertTrue(usernameValidator.validate("aa").stream().anyMatch(patternNotMatchPredicate));
         assertTrue(usernameValidator.validate("aaaaaaaaaaaaaaaaa").stream().anyMatch(patternNotMatchPredicate));
         assertTrue(usernameValidator.validate("11").stream().anyMatch(patternNotMatchPredicate));
@@ -90,8 +91,8 @@ class UsernameValidatorTest {
     public void ShouldFailIfMatchesPatterButInDb() {
         when(userService.findByUsername(anyString())).thenReturn(new User());
 
-        Predicate<Map<String, String>> patternNotMatchPredicate = errors -> errors.containsKey("error") && errors.get("error").equals("invalid username")
-                && errors.containsKey("message") && errors.get("message").equals("user with this username already exists");
+        Predicate<Map<String, String>> patternNotMatchPredicate = error -> error.containsKey("error") && error.get("error").equals("invalid username")
+                && error.containsKey("message") && error.get("message").equals("user with this username already exists");
 
         assertTrue(usernameValidator.validate("aaa").stream().anyMatch(patternNotMatchPredicate));
         assertTrue(usernameValidator.validate("aaaaaaaaaaaaaaaa").stream().anyMatch(patternNotMatchPredicate));
