@@ -1,7 +1,6 @@
 package com.mathinjection.authservice.util.validators;
 
 import com.mathinjection.authservice.service.UserService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
