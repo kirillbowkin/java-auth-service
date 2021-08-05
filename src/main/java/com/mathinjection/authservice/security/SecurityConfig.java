@@ -37,6 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                .antMatchers("/users").hasAnyAuthority("GET_USERS")
                 .antMatchers("/like").hasAnyAuthority("LIKE_POSTS")
                 .antMatchers("/comment").hasAnyAuthority("COMMENT_POSTS")
                 .antMatchers("/api/auth/v1/register").permitAll()
