@@ -12,27 +12,27 @@ import static org.mockito.Mockito.mock;
 
 @Configuration
 public class TestConfig {
-    @Bean
+    @Bean("TestUsernameValidator")
     public UsernameValidator usernameValidator() {
         return new UsernameValidator(userService());
     }
 
-    @Bean
+    @Bean("TestPasswordValidator")
     public PasswordValidator passwordValidator() {
         return new PasswordValidator();
     }
 
-    @Bean
+    @Bean("TestRegisterReqDtoValidator")
     RegisterReqDtoValidator registerReqDtoValidator() {
         return new RegisterReqDtoValidator(usernameValidator(), emailValidator(), passwordValidator());
     }
 
-    @Bean
+    @Bean("TestEmailValidator")
     public EmailValidator emailValidator() {
         return new EmailValidator(userService());
     }
 
-    @Bean
+    @Bean("TestUserService")
     public UserService userService() {
         return mock(UserService.class);
     }
