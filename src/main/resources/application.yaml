@@ -8,5 +8,7 @@ spring:
     user: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
     url: ${DATABASE_URL}
+  main:
+    allow-bean-definition-overriding: true
 server:
   port: ${SERVER_PORT:8080}
