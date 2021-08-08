@@ -1,7 +1,7 @@
 package com.mathinjection.authservice.util.validators;
 
 import com.mathinjection.authservice.configuration.TestConfig;
-import com.mathinjection.authservice.model.User;
+import com.mathinjection.authservice.entity.UserEntity;
 import com.mathinjection.authservice.service.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -41,7 +40,7 @@ class UsernameValidatorTest {
     @DisplayName("Should give error that username already exists")
     public void ShouldGiveErrorUserAlreadyExists() {
         final String username = "whatever";
-        when(userService.findByUsername(username)).thenReturn(new User());
+        when(userService.findByUsername(username)).thenReturn(new UserEntity());
 
         assertTrue(usernameValidator.validate(username).stream().anyMatch(
                 error -> error.containsKey("error") && error.get("error").equals("invalid username")
@@ -91,7 +90,7 @@ class UsernameValidatorTest {
     @Test
     @DisplayName("Should fail if username matches pattern but does exist in db")
     public void ShouldFailIfMatchesPatterButInDb() {
-        when(userService.findByUsername(anyString())).thenReturn(new User());
+        when(userService.findByUsername(anyString())).thenReturn(new UserEntity());
 
         Predicate<Map<String, String>> usernameInDbPredicate = error -> error.containsKey("error") && error.get("error").equals("invalid username")
                 && error.containsKey("message") && error.get("message").equals("user with this username already exists");

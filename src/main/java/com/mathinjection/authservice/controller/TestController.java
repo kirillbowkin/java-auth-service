@@ -1,7 +1,12 @@
 package com.mathinjection.authservice.controller;
 
 import com.mathinjection.authservice.dto.*;
+import com.mathinjection.authservice.entity.UserEntity;
+import com.mathinjection.authservice.model.RoleModel;
+import com.mathinjection.authservice.model.UserModel;
 import com.mathinjection.authservice.openApi.SecuredController;
+import com.mathinjection.authservice.repository.AuthorityRepository;
+import com.mathinjection.authservice.repository.RoleRepository;
 import com.mathinjection.authservice.service.UserService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/")
@@ -21,6 +28,8 @@ import java.time.LocalDateTime;
 public class TestController implements SecuredController {
 
     private final UserService userService;
+    private final RoleRepository roleRepository;
+    private final AuthorityRepository authorityRepository;
 
     @GetMapping("like")
     @ApiResponses(value = {
@@ -44,15 +53,27 @@ public class TestController implements SecuredController {
 
     @GetMapping("users")
     public ResponseEntity<? extends BaseResponseDto> getUsers() {
+        List<UserEntity> userEntities = userService.findAll();
+        List<UserModel> userModels = userEntities.stream().map(UserModel::EntityToModel).collect(Collectors.toList());
         return ResponseEntity
                 .ok()
                 .body(
                         new GetUsersResponseDto()
-                                .setUsers(userService.findAll())
+                                .setUsers(userModels)
                                 .setPath("/users")
                                 .setStatus(ResponseStatus.SUCCESS)
                                 .setTimestamp(LocalDateTime.now())
                 );
+    }
+
+    @GetMapping("roles")
+    public ResponseEntity<?> getRoles() {
+        return ResponseEntity.ok().body((roleRepository.findAll().stream().map(RoleModel::EntityToModel)));
+    }
+
+    @GetMapping("authorities")
+    public ResponseEntity<?> getAuthorities() {
+        return ResponseEntity.ok().body(authorityRepository.findAll());
     }
 
 }
