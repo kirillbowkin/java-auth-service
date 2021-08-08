@@ -1,7 +1,6 @@
 package com.mathinjection.authservice.service;
 
-import com.mathinjection.authservice.model.User;
-import io.swagger.v3.oas.annotations.servers.Server;
+import com.mathinjection.authservice.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,7 +19,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userService.findByUsername(username);
+        UserEntity user = userService.findByUsername(username);
 
         Collection<GrantedAuthority> authorities = new ArrayList<>();
 

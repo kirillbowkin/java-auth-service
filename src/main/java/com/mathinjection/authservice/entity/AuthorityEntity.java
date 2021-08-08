@@ -1,11 +1,9 @@
-package com.mathinjection.authservice.model;
+package com.mathinjection.authservice.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.UUID;
 
 @Entity
@@ -13,7 +11,7 @@ import java.util.UUID;
 @Table(name = "authorities")
 @Accessors(chain = true)
 
-public class Authority {
+public class AuthorityEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")

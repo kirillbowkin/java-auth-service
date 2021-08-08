@@ -1,15 +1,14 @@
 package com.mathinjection.authservice.repository;
 
-import com.mathinjection.authservice.model.User;
+import com.mathinjection.authservice.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, UUID> {
-    Optional<User> findUserByUsername(String username);
-    Optional<User> findUserByEmail(String email);
+public interface UserRepository extends JpaRepository<UserEntity, UUID> {
+    Optional<UserEntity> findUserByUsername(String username);
+    Optional<UserEntity> findUserByEmail(String email);
 }

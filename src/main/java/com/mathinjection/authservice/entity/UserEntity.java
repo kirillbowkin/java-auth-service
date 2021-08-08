@@ -1,4 +1,4 @@
-package com.mathinjection.authservice.model;
+package com.mathinjection.authservice.entity;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -11,7 +11,7 @@ import java.util.UUID;
 @Data
 @Table(name = "users")
 @Accessors(chain = true)
-public class User {
+public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -19,13 +19,15 @@ public class User {
 
     @Column(name = "username")
     private String username;
+
     @Column(name = "password")
     private String password;
+
     @Column(name = "email")
     private String email;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-    private Collection<Role> roles;
+    private Collection<RoleEntity> roles;
 }
