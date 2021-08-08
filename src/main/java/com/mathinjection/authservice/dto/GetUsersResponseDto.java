@@ -1,7 +1,6 @@
 package com.mathinjection.authservice.dto;
 
-import com.mathinjection.authservice.entity.UserEntity;
-import com.mathinjection.authservice.model.UserModel;
+import com.mathinjection.authservice.model.User;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -12,5 +11,5 @@ import java.util.List;
 @Data
 @Accessors(chain = true)
 public class GetUsersResponseDto extends BaseResponseDto {
-    List<UserModel> users;
+    List<User> users;
 }

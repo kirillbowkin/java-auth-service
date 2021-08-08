@@ -1,18 +1,18 @@
-package com.mathinjection.authservice.entity;
+package com.mathinjection.authservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Data
 @Table(name = "roles")
 @Accessors(chain = true)
-public class RoleEntity {
+public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -21,12 +21,10 @@ public class RoleEntity {
     @Column(name = "name")
     private String name;
 
-    @ManyToMany(mappedBy = "roles")
-    private List<UserEntity> users;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "roles_authorities", joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
-    private Collection<AuthorityEntity> authorities;
+    private Collection<Authority> authorities;
 
 }

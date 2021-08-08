@@ -2,7 +2,7 @@ package com.mathinjection.authservice.util.validators;
 
 import com.mathinjection.authservice.configuration.TestConfig;
 import com.mathinjection.authservice.dto.RegisterReqDto;
-import com.mathinjection.authservice.entity.UserEntity;
+import com.mathinjection.authservice.model.User;
 import com.mathinjection.authservice.service.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -101,7 +101,7 @@ class RegisterReqDtoValidatorTest {
     @Test
     @DisplayName("Should fail if username exists in db")
     public void shouldFailIfUsernameInDb() {
-        when(userService.findByUsername(anyString())).thenReturn(new UserEntity());
+        when(userService.findByUsername(anyString())).thenReturn(new User());
         when(userService.findByEmail(anyString())).thenThrow(new UsernameNotFoundException(""));
 
         Predicate<Map<String, String>> usernameInDbPredicate = error -> error.containsKey("error") && error.get("error").equals("invalid username")
@@ -121,7 +121,7 @@ class RegisterReqDtoValidatorTest {
     @DisplayName("Should fail if email exists in db")
     public void shouldFailIfEmailInDb() {
         when(userService.findByUsername(anyString())).thenThrow(new UsernameNotFoundException(""));
-        when(userService.findByEmail(anyString())).thenReturn(new UserEntity());
+        when(userService.findByEmail(anyString())).thenReturn(new User());
 
         Predicate<Map<String, String>> usernameInDbPredicate = error -> error.containsKey("error") && error.get("error").equals("invalid email")
                 && error.containsKey("message") && error.get("message").equals("user with this email already exists");

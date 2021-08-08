@@ -1,7 +1,7 @@
 package com.mathinjection.authservice.util.validators;
 
 import com.mathinjection.authservice.configuration.TestConfig;
-import com.mathinjection.authservice.entity.UserEntity;
+import com.mathinjection.authservice.model.User;
 import com.mathinjection.authservice.service.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +38,7 @@ class EmailValidatorTest {
     @Test
     @DisplayName("Should give error that email already exists")
     public void shouldGiveErrorIfEmailAlreadyExists() {
-        when(userService.findByEmail(anyString())).thenReturn(new UserEntity());
+        when(userService.findByEmail(anyString())).thenReturn(new User());
 
         assertTrue(emailValidator.validate("whatever").stream().anyMatch(
                 error -> error.containsKey("error") && error.get("error").equals("invalid email")
@@ -102,7 +102,7 @@ class EmailValidatorTest {
         Predicate<Map<String, String>> emailExistsPredicate = error -> error.containsKey("error") && error.get("error").equals("invalid email")
                 && error.containsKey("message") && error.get("message").equals("user with this email already exists");
 
-        when(userService.findByEmail(anyString())).thenReturn(new UserEntity());
+        when(userService.findByEmail(anyString())).thenReturn(new User());
 
         assertTrue(emailValidator.validate("fassfd@fjf.fddd").stream().anyMatch(emailExistsPredicate));
         assertTrue(emailValidator.validate("test@gogle.com").stream().anyMatch(emailExistsPredicate));
