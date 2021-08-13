@@ -31,7 +31,7 @@ public class EmailValidator implements CustomValidator<String> {
         }
 
         try {
-            userService.findByEmail(email);
+            userService.findEntityByEmail(email);
             return new ArrayList<>() {{
                 add(new HashMap<>() {{
                     put("error", "invalid email");

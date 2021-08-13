@@ -19,7 +19,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity user = userService.findByUsername(username);
+        UserEntity user = userService.findEntityByUsername(username);
 
         Collection<GrantedAuthority> authorities = new ArrayList<>();
 

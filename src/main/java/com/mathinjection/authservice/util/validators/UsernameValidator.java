@@ -30,7 +30,7 @@ public class UsernameValidator implements CustomValidator<String> {
         }
 
         try {
-            userService.findByUsername(username);
+            userService.findEntityByUsername(username);
             return new ArrayList<>(){{
                 add(new HashMap<>(){{
                     put("error", "invalid username");
