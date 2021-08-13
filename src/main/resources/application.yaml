@@ -1,12 +1,12 @@
 spring:
   datasource:
-    url: ${DATABASE_URL}
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
+    url: jdbc:postgresql://${DATABASE_URL:localhost:5432/auth_service}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:31032000}
     driver-class-name: org.postgresql.Driver
   flyway:
-    user: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
-    url: ${DATABASE_URL}
+    url: jdbc:postgresql://${DATABASE_URL:localhost:5432/auth_service}
+    user: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:31032000}
 server:
   port: ${SERVER_PORT:8080}
