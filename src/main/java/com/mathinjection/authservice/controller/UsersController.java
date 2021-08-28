@@ -2,8 +2,6 @@ package com.mathinjection.authservice.controller;
 
 import com.mathinjection.authservice.dto.*;
 import com.mathinjection.authservice.dto.ResponseStatus;
-import com.mathinjection.authservice.entity.RoleEntity;
-import com.mathinjection.authservice.entity.UserEntity;
 import com.mathinjection.authservice.model.UserModel;
 import com.mathinjection.authservice.openApi.SecuredController;
 import com.mathinjection.authservice.repository.RoleRepository;
@@ -11,18 +9,14 @@ import com.mathinjection.authservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
-import javax.management.relation.RoleNotFoundException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,7 +36,7 @@ public class UsersController implements SecuredController {
                     .body(
                             new GetUsersResponseDto()
                                     .setUsers(userModels)
-                                    .setPath("/users")
+                                    .setPath("/api/users/v1/users")
                                     .setStatus(ResponseStatus.SUCCESS)
                                     .setTimestamp(LocalDateTime.now())
                     );
@@ -55,7 +49,7 @@ public class UsersController implements SecuredController {
                                         put("error", "error while getting users");
                                         put("message", e.getMessage());
                                     }}))
-                                    .setPath("/users")
+                                    .setPath("/api/users/v1/users")
                                     .setStatus(ResponseStatus.ERROR)
                                     .setTimestamp(LocalDateTime.now())
                     );
@@ -73,7 +67,7 @@ public class UsersController implements SecuredController {
                     .body(
                             new GetUserResponseDto()
                                     .setUser(userModel)
-                                    .setPath(new StringBuilder().append("/user/").append(username).toString())
+                                    .setPath(new StringBuilder().append("/api/users/v1/user/").append(username).toString())
                                     .setStatus(ResponseStatus.SUCCESS)
                                     .setTimestamp(LocalDateTime.now())
                     );
@@ -86,7 +80,7 @@ public class UsersController implements SecuredController {
                                         put("error", "error while getting user");
                                         put("message", e.getMessage());
                                     }}))
-                                    .setPath(new StringBuilder().append("/user/").append(username).toString())
+                                    .setPath(new StringBuilder().append("/api/users/v1/user/").append(username).toString())
                                     .setStatus(ResponseStatus.ERROR)
                                     .setTimestamp(LocalDateTime.now())
                     );
@@ -103,7 +97,7 @@ public class UsersController implements SecuredController {
                     .body(
                             new GetUserResponseDto()
                                     .setUser(userModel)
-                                    .setPath(new StringBuilder().append("/user/").append(id).toString())
+                                    .setPath(new StringBuilder().append("/api/users/v1/user/").append(id).toString())
                                     .setStatus(ResponseStatus.SUCCESS)
                                     .setTimestamp(LocalDateTime.now())
                     );
@@ -116,7 +110,7 @@ public class UsersController implements SecuredController {
                                         put("error", "error while getting user");
                                         put("message", e.getMessage());
                                     }}))
-                                    .setPath(new StringBuilder().append("/user/").append(id).toString())
+                                    .setPath(new StringBuilder().append("/api/users/v1/user/").append(id).toString())
                                     .setStatus(ResponseStatus.ERROR)
                                     .setTimestamp(LocalDateTime.now())
                     );
@@ -125,23 +119,51 @@ public class UsersController implements SecuredController {
 
     @PostMapping("addRole")
     @PreAuthorize("hasAnyAuthority('EDIT_USERS')")
-    public ResponseEntity<? extends BaseResponseDto> addRoleToUser(@RequestBody AddRoleDto addRoleDto) {
+    public ResponseEntity<? extends BaseResponseDto> addRoleToUser(@RequestBody UserRoleDto userRoleDto) {
         try {
-            userService.addRoleToUser(addRoleDto.getUserId(), addRoleDto.getRoleId());
-            return ResponseEntity.ok().body(null);
+            userService.addRoleToUser(userRoleDto.getUserId(), userRoleDto.getRoleId());
+            return ResponseEntity.ok().body(
+                    new SuccessRespDto()
+                            .setPath("/api/users/v1/addRole")
+                            .setStatus(ResponseStatus.SUCCESS)
+                            .setTimestamp(LocalDateTime.now())
+            );
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body(
+                    new ErrorResponseDto()
+                            .setErrors(Collections.singletonList(new HashMap<>() {{
+                        put("error", "error while adding role to user");
+                        put("message", e.getMessage());
+                    }}))
+                    .setPath("/api/users/v1/addRole")
+                    .setStatus(ResponseStatus.ERROR)
+                    .setTimestamp(LocalDateTime.now())
+            );
         }
     }
 
     @PostMapping("deleteRole")
     @PreAuthorize("hasAnyAuthority('EDIT_USERS')")
-    public ResponseEntity<? extends BaseResponseDto> deleteRoleFromUser(@RequestBody AddRoleDto deleteRoleDto) {
+    public ResponseEntity<? extends BaseResponseDto> deleteRoleFromUser(@RequestBody UserRoleDto deleteRoleDto) {
         try {
             userService.deleteRoleFromUser(deleteRoleDto.getUserId(), deleteRoleDto.getRoleId());
-            return ResponseEntity.ok().body(null);
+            return ResponseEntity.ok().body(
+                    new SuccessRespDto()
+                            .setPath("/api/users/v1/addRole")
+                            .setStatus(ResponseStatus.SUCCESS)
+                            .setTimestamp(LocalDateTime.now())
+            );
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body(
+                    new ErrorResponseDto()
+                            .setErrors(Collections.singletonList(new HashMap<>() {{
+                                put("error", "error while adding role to user");
+                                put("message", e.getMessage());
+                            }}))
+                            .setPath("/api/users/v1/addRole")
+                            .setStatus(ResponseStatus.ERROR)
+                            .setTimestamp(LocalDateTime.now())
+            );
         }
     }
 }
