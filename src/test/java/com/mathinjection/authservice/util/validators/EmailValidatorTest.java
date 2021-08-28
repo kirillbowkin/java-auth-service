@@ -38,7 +38,7 @@ class EmailValidatorTest {
     @Test
     @DisplayName("Should give error that email already exists")
     public void shouldGiveErrorIfEmailAlreadyExists() {
-        when(userService.findByEmail(anyString())).thenReturn(new UserEntity());
+        when(userService.findEntityByEmail(anyString())).thenReturn(new UserEntity());
 
         assertTrue(emailValidator.validate("whatever").stream().anyMatch(
                 error -> error.containsKey("error") && error.get("error").equals("invalid email")
@@ -49,7 +49,7 @@ class EmailValidatorTest {
     @Test
     @DisplayName("Should not give error that email already exists")
     public void shouldNotGiveErrorIfEmailAlreadyExists() {
-        when(userService.findByEmail(anyString())).thenThrow(new UsernameNotFoundException(""));
+        when(userService.findEntityByEmail(anyString())).thenThrow(new UsernameNotFoundException(""));
 
         Predicate<Map<String, String>> emailExistsPredicate = error -> error.containsKey("error") && error.get("error").equals("invalid email")
                 && error.containsKey("message") && error.get("message").equals("user with this email already exists");
@@ -62,7 +62,7 @@ class EmailValidatorTest {
     @Test
     @DisplayName("Should fail if email not matches pattern")
     public void shouldFailIfEmailNotMatchesPatter() {
-        when(userService.findByEmail(anyString())).thenThrow(new UsernameNotFoundException(""));
+        when(userService.findEntityByEmail(anyString())).thenThrow(new UsernameNotFoundException(""));
 
         Predicate<Map<String, String>> patternNotMatchPredicate = error -> error.containsKey("error") && error.get("error").equals("invalid email")
                 && error.containsKey("message") && error.get("message").equals("invalid email format");
@@ -102,7 +102,7 @@ class EmailValidatorTest {
         Predicate<Map<String, String>> emailExistsPredicate = error -> error.containsKey("error") && error.get("error").equals("invalid email")
                 && error.containsKey("message") && error.get("message").equals("user with this email already exists");
 
-        when(userService.findByEmail(anyString())).thenReturn(new UserEntity());
+        when(userService.findEntityByEmail(anyString())).thenReturn(new UserEntity());
 
         assertTrue(emailValidator.validate("fassfd@fjf.fddd").stream().anyMatch(emailExistsPredicate));
         assertTrue(emailValidator.validate("test@gogle.com").stream().anyMatch(emailExistsPredicate));
@@ -116,7 +116,7 @@ class EmailValidatorTest {
     @Test
     @DisplayName("Should pass if email matches pattern and does not exist in db")
     public void shouldPassIfEmailMatchesPatternAndDoesNotExistsInDb() {
-        when(userService.findByEmail(anyString())).thenThrow(new UsernameNotFoundException(""));
+        when(userService.findEntityByEmail(anyString())).thenThrow(new UsernameNotFoundException(""));
 
         assertTrue(emailValidator.validate("fassfd@fjf.fddd").isEmpty());
         assertTrue(emailValidator.validate("test@gogle.com").isEmpty());

@@ -42,8 +42,8 @@ public class AuthController {
 
     @PostMapping("register")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200",description = "OK", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = RegisterResponseDto.class))}),
-            @ApiResponse(responseCode = "400",description = "BAD_REQUEST",content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "200", description = "OK", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = RegisterResponseDto.class))}),
+            @ApiResponse(responseCode = "400", description = "BAD_REQUEST", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDto.class))}),
 
     })
     public ResponseEntity<? extends BaseResponseDto> register(@RequestBody RegisterReqDto regReqDto) {
@@ -104,8 +104,8 @@ public class AuthController {
 
     @PostMapping("authenticate")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200",description = "OK", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AuthResponseDto.class))}),
-            @ApiResponse(responseCode = "400",description = "BAD_REQUEST",content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "200", description = "OK", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AuthResponseDto.class))}),
+            @ApiResponse(responseCode = "400", description = "BAD_REQUEST", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDto.class))}),
 
     })
     public ResponseEntity<? extends BaseResponseDto> authenticate(@RequestBody AuthenticationReqDto authReqDto) throws Exception {
@@ -117,7 +117,7 @@ public class AuthController {
                     .body(
                             new ErrorResponseDto()
                                     .setErrors(new ArrayList<>() {{
-                                        add(new HashMap<>(){{
+                                        add(new HashMap<>() {{
                                             put("error", "bad credentials");
                                             put("message", "incorrect username or password");
                                         }});
@@ -145,25 +145,45 @@ public class AuthController {
 
     @PostMapping("refresh")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200",description = "OK", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AuthResponseDto.class))}),
-            @ApiResponse(responseCode = "400",description = "BAD_REQUEST",content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "200", description = "OK", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AuthResponseDto.class))}),
+            @ApiResponse(responseCode = "400", description = "BAD_REQUEST", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDto.class))}),
 
     })
     public ResponseEntity<? extends BaseResponseDto> refresh(@RequestBody RefreshReqDto refreshReqDto) throws Exception {
         String username = jwtUtil.getSubject(refreshReqDto.getRefreshToken());
 
-        //TODO: Refactor
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        final Map<String, String> tokens = jwtUtil.generateTokens(userDetails.getUsername(), userDetails.getAuthorities());
+        try {
 
-        return ResponseEntity
-                .ok()
-                .body(
-                        new AuthResponseDto()
-                                .setTokens(tokens)
-                                .setPath("/api/auth/v1/authenticate")
-                                .setTimestamp(LocalDateTime.now())
-                                .setStatus(ResponseStatus.SUCCESS)
-                );
+            //TODO: Refactor
+            final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            final Map<String, String> tokens = jwtUtil.generateTokens(userDetails.getUsername(), userDetails.getAuthorities());
+
+            return ResponseEntity
+                    .ok()
+                    .body(
+                            new AuthResponseDto()
+                                    .setTokens(tokens)
+                                    .setPath("/api/auth/v1/authenticate")
+                                    .setTimestamp(LocalDateTime.now())
+                                    .setStatus(ResponseStatus.SUCCESS)
+                    );
+
+        } catch (Exception e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            //TODO: Implement ErrorService
+                            new ErrorResponseDto()
+                                    .setErrors(new ArrayList<>() {{
+                                        add(new HashMap<>() {{
+                                            put("error", "registration error");
+                                            put("message", e.getMessage());
+                                        }});
+                                    }})
+                                    .setStatus(ResponseStatus.ERROR)
+                                    .setPath("/api/auth/v1/register")
+                                    .setTimestamp(LocalDateTime.now())
+                    );
+        }
     }
 }

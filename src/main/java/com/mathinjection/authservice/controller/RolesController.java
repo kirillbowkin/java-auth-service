@@ -2,7 +2,6 @@ package com.mathinjection.authservice.controller;
 
 import com.mathinjection.authservice.dto.*;
 import com.mathinjection.authservice.dto.ResponseStatus;
-import com.mathinjection.authservice.model.FlatRoleModel;
 import com.mathinjection.authservice.model.RoleModel;
 import com.mathinjection.authservice.openApi.SecuredController;
 import com.mathinjection.authservice.service.RoleService;
@@ -61,7 +60,7 @@ public class RolesController implements SecuredController {
             return ResponseEntity
                     .ok()
                     .body(
-                            new GetRoleResponseDto()
+                            new RoleResponseDto()
                                     .setRole(roleModel)
                                     .setPath(new StringBuilder().append("/api/roles/v1/").append(roleName).toString())
                                     .setStatus(ResponseStatus.SUCCESS)
@@ -91,7 +90,7 @@ public class RolesController implements SecuredController {
             return ResponseEntity
                     .ok()
                     .body(
-                            new GetRoleResponseDto()
+                            new RoleResponseDto()
                                     .setRole(roleModel)
                                     .setPath(new StringBuilder().append("/api/roles/v1?id='").append(roleId).append("'").toString())
                                     .setStatus(ResponseStatus.SUCCESS)
@@ -171,5 +170,69 @@ public class RolesController implements SecuredController {
         }
     }
 
+    @PostMapping("addRole")
+    @PreAuthorize("hasAnyAuthority('ADD_ROLES')")
+    public ResponseEntity<? extends BaseResponseDto> addRole(@RequestBody AddRoleDto addRoleDto) {
+        try {
+
+            RoleModel roleModel = roleService.addRole(addRoleDto.getRoleName(), addRoleDto.getAuthorities());
+            return ResponseEntity
+                    .ok()
+                    .body(
+                            new RoleResponseDto()
+                                    .setRole(roleModel)
+                                    .setPath("/api/roles/v1/addRole")
+                                    .setStatus(ResponseStatus.SUCCESS)
+                                    .setTimestamp(LocalDateTime.now())
+                    );
+        } catch (Exception e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            new ErrorResponseDto()
+                                    .setErrors(Collections.singletonList(new HashMap<>() {{
+                                        put("error", "error while adding new role");
+                                        put("message", e.getMessage());
+                                    }}))
+                                    .setPath("/api/roles/v1/addAuthority")
+                                    .setStatus(ResponseStatus.ERROR)
+                                    .setTimestamp(LocalDateTime.now())
+                    );
+        }
+
+
+    }
+
+    @DeleteMapping("deleteRole/{id}")
+    @PreAuthorize("hasAnyAuthority('DELETE_ROLES')")
+    public ResponseEntity<? extends BaseResponseDto> deleteRole(@PathVariable("id") UUID roleId) {
+        try {
+
+            roleService.deleteRoleById(roleId);
+            return ResponseEntity
+                    .ok()
+                    .body(
+                            new SuccessRespDto()
+                                    .setPath(new StringBuilder().append("/api/roles/v1/deleteRole/").append(roleId).toString())
+                                    .setStatus(ResponseStatus.SUCCESS)
+                                    .setTimestamp(LocalDateTime.now())
+                    );
+        } catch (Exception e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            new ErrorResponseDto()
+                                    .setErrors(Collections.singletonList(new HashMap<>() {{
+                                        put("error", "error while deleting role");
+                                        put("message", e.getMessage());
+                                    }}))
+                                    .setPath("/api/roles/v1/addAuthority")
+                                    .setStatus(ResponseStatus.ERROR)
+                                    .setTimestamp(LocalDateTime.now())
+                    );
+        }
+
+
+    }
 
 }
