@@ -24,7 +24,6 @@ import java.util.UUID;
 public class UsersController implements SecuredController {
 
     private final UserService userService;
-    private final RoleRepository roleRepository;
 
     @PreAuthorize("hasAnyAuthority('GET_USERS')")
     @GetMapping("all")
@@ -36,7 +35,7 @@ public class UsersController implements SecuredController {
                     .body(
                             new GetUsersResponseDto()
                                     .setUsers(userModels)
-                                    .setPath("/api/users/v1/users")
+                                    .setPath("/api/users/v1")
                                     .setStatus(ResponseStatus.SUCCESS)
                                     .setTimestamp(LocalDateTime.now())
                     );
@@ -67,7 +66,7 @@ public class UsersController implements SecuredController {
                     .body(
                             new GetUserResponseDto()
                                     .setUser(userModel)
-                                    .setPath(new StringBuilder().append("/api/users/v1/user/").append(username).toString())
+                                    .setPath(new StringBuilder().append("/api/users/v1/").append(username).toString())
                                     .setStatus(ResponseStatus.SUCCESS)
                                     .setTimestamp(LocalDateTime.now())
                     );
@@ -80,7 +79,7 @@ public class UsersController implements SecuredController {
                                         put("error", "error while getting user");
                                         put("message", e.getMessage());
                                     }}))
-                                    .setPath(new StringBuilder().append("/api/users/v1/user/").append(username).toString())
+                                    .setPath(new StringBuilder().append("/api/users/v1/").append(username).toString())
                                     .setStatus(ResponseStatus.ERROR)
                                     .setTimestamp(LocalDateTime.now())
                     );
@@ -97,7 +96,7 @@ public class UsersController implements SecuredController {
                     .body(
                             new GetUserResponseDto()
                                     .setUser(userModel)
-                                    .setPath(new StringBuilder().append("/api/users/v1/user/").append(id).toString())
+                                    .setPath(new StringBuilder().append("/api/users/v1?id='").append(id).append("'").toString())
                                     .setStatus(ResponseStatus.SUCCESS)
                                     .setTimestamp(LocalDateTime.now())
                     );
@@ -110,7 +109,7 @@ public class UsersController implements SecuredController {
                                         put("error", "error while getting user");
                                         put("message", e.getMessage());
                                     }}))
-                                    .setPath(new StringBuilder().append("/api/users/v1/user/").append(id).toString())
+                                    .setPath(new StringBuilder().append("/api/users/v1?id='").append(id).append("'").toString())
                                     .setStatus(ResponseStatus.ERROR)
                                     .setTimestamp(LocalDateTime.now())
                     );
@@ -142,7 +141,7 @@ public class UsersController implements SecuredController {
         }
     }
 
-    @PostMapping("deleteRole")
+    @DeleteMapping("deleteRole")
     @PreAuthorize("hasAnyAuthority('EDIT_USERS')")
     public ResponseEntity<? extends BaseResponseDto> deleteRoleFromUser(@RequestBody UserRoleDto deleteRoleDto) {
         try {

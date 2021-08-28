@@ -10,5 +10,5 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class RegisterResponseDto extends BaseResponseDto {
-    UserModel user;
+    private UserModel user;
 }
