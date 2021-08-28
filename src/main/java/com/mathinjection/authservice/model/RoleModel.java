@@ -7,11 +7,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class RoleModel extends FlatRoleModel{
-    private Collection<FlatUserModel> users;
+    private Collection<FlatAuthorityModel> authorityModels;
 
-    public RoleModel(UUID id, String name, Collection<FlatUserModel> users) {
+    public RoleModel(UUID id, String name, Collection<FlatAuthorityModel> authorityModels) {
         super(id, name);
-        this.users = users;
+        this.authorityModels = authorityModels;
     }
 
 
@@ -19,14 +19,14 @@ public class RoleModel extends FlatRoleModel{
         return new RoleModel(
                 roleEntity.getId(),
                 roleEntity.getName(),
-                roleEntity.getUsers().stream().map(FlatUserModel::EntityToModel).collect(Collectors.toList()));
+                roleEntity.getAuthorities().stream().map(FlatAuthorityModel::EntityToModel).collect(Collectors.toList()));
     }
 
-    public Collection<FlatUserModel> getUsers() {
-        return users;
+    public Collection<FlatAuthorityModel> getAuthorities() {
+        return authorityModels;
     }
 
-    public void setUsers(Collection<FlatUserModel> users) {
-        this.users = users;
+    public void setAuthorities(Collection<FlatAuthorityModel> users) {
+        this.authorityModels = users;
     }
 }
