@@ -40,8 +40,8 @@ class RegisterReqDtoValidatorTest {
     @Test
     @DisplayName("Should fail if RegisterRequestDto is invalid because of pattern mismatch")
     public void shouldFailIFRegisterRequestDtoInvalidBecausePatternMismatch() {
-        when(userService.findByUsername(anyString())).thenThrow(new UsernameNotFoundException(""));
-        when(userService.findByEmail(anyString())).thenThrow(new UsernameNotFoundException(""));
+        when(userService.findEntityByUsername(anyString())).thenThrow(new UsernameNotFoundException(""));
+        when(userService.findEntityByEmail(anyString())).thenThrow(new UsernameNotFoundException(""));
 
         assertFalse(registerReqDtoValidator.validate(new RegisterReqDto(null, null, null)).isEmpty());
         assertFalse(registerReqDtoValidator.validate(new RegisterReqDto(null, null, "")).isEmpty());
@@ -86,8 +86,8 @@ class RegisterReqDtoValidatorTest {
     @Test
     @DisplayName("Should pass if RegisterRequestDto pattern matches")
     public void shouldPassIfRegisterRequestDtoPatterMatches() {
-        when(userService.findByUsername(anyString())).thenThrow(new UsernameNotFoundException(""));
-        when(userService.findByEmail(anyString())).thenThrow(new UsernameNotFoundException(""));
+        when(userService.findEntityByUsername(anyString())).thenThrow(new UsernameNotFoundException(""));
+        when(userService.findEntityByEmail(anyString())).thenThrow(new UsernameNotFoundException(""));
 
         assertTrue(registerReqDtoValidator.validate(new RegisterReqDto("aaa", "fassfd@fjf.fddd", "aaaaaaa%1")).isEmpty());
         assertTrue(registerReqDtoValidator.validate(new RegisterReqDto("aaaaaaaaaaaaaaaa", "test@gogle.com", "aaaaaaa*1")).isEmpty());
@@ -101,8 +101,8 @@ class RegisterReqDtoValidatorTest {
     @Test
     @DisplayName("Should fail if username exists in db")
     public void shouldFailIfUsernameInDb() {
-        when(userService.findByUsername(anyString())).thenReturn(new UserEntity());
-        when(userService.findByEmail(anyString())).thenThrow(new UsernameNotFoundException(""));
+        when(userService.findEntityByUsername(anyString())).thenReturn(new UserEntity());
+        when(userService.findEntityByEmail(anyString())).thenThrow(new UsernameNotFoundException(""));
 
         Predicate<Map<String, String>> usernameInDbPredicate = error -> error.containsKey("error") && error.get("error").equals("invalid username")
                 && error.containsKey("message") && error.get("message").equals("user with this username already exists");
@@ -120,8 +120,8 @@ class RegisterReqDtoValidatorTest {
     @Test
     @DisplayName("Should fail if email exists in db")
     public void shouldFailIfEmailInDb() {
-        when(userService.findByUsername(anyString())).thenThrow(new UsernameNotFoundException(""));
-        when(userService.findByEmail(anyString())).thenReturn(new UserEntity());
+        when(userService.findEntityByUsername(anyString())).thenThrow(new UsernameNotFoundException(""));
+        when(userService.findEntityByEmail(anyString())).thenReturn(new UserEntity());
 
         Predicate<Map<String, String>> usernameInDbPredicate = error -> error.containsKey("error") && error.get("error").equals("invalid email")
                 && error.containsKey("message") && error.get("message").equals("user with this email already exists");

@@ -40,7 +40,7 @@ class UsernameValidatorTest {
     @DisplayName("Should give error that username already exists")
     public void ShouldGiveErrorUserAlreadyExists() {
         final String username = "whatever";
-        when(userService.findByUsername(username)).thenReturn(new UserEntity());
+        when(userService.findEntityByUsername(username)).thenReturn(new UserEntity());
 
         assertTrue(usernameValidator.validate(username).stream().anyMatch(
                 error -> error.containsKey("error") && error.get("error").equals("invalid username")
@@ -52,7 +52,7 @@ class UsernameValidatorTest {
     @Test
     @DisplayName("Should not give error that username already exists")
     public void ShouldNotRejectUsernameIfItPersistsInDB() {
-        when(userService.findByUsername(anyString())).thenThrow(new UsernameNotFoundException(""));
+        when(userService.findEntityByUsername(anyString())).thenThrow(new UsernameNotFoundException(""));
 
         Predicate<Map<String, String>> usernameInDbPredicate = error -> error.containsKey("error") && error.get("error").equals("invalid username")
                 && error.containsKey("message") && error.get("message").equals("user with this username already exists");
@@ -65,7 +65,7 @@ class UsernameValidatorTest {
     @Test
     @DisplayName("Should fail if username not matches pattern")
     public void ShouldFailIfUsernameNotMatchesPattern() {
-        when(userService.findByUsername(anyString())).thenThrow(new UsernameNotFoundException(""));
+        when(userService.findEntityByUsername(anyString())).thenThrow(new UsernameNotFoundException(""));
 
         Predicate<Map<String, String>> patternNotMatchPredicate = error -> error.containsKey("error") && error.get("error").equals("invalid username")
                 && error.containsKey("message") && error.get("message").equals("username must be: from 3 to 16, may include lowercase, numbers, '-', '_'");
@@ -90,7 +90,7 @@ class UsernameValidatorTest {
     @Test
     @DisplayName("Should fail if username matches pattern but does exist in db")
     public void ShouldFailIfMatchesPatterButInDb() {
-        when(userService.findByUsername(anyString())).thenReturn(new UserEntity());
+        when(userService.findEntityByUsername(anyString())).thenReturn(new UserEntity());
 
         Predicate<Map<String, String>> usernameInDbPredicate = error -> error.containsKey("error") && error.get("error").equals("invalid username")
                 && error.containsKey("message") && error.get("message").equals("user with this username already exists");
@@ -109,7 +109,7 @@ class UsernameValidatorTest {
     @Test
     @DisplayName("Should pass if username matches pattern and does not exist in db")
     public void ShouldPassIfMatchesPatterAndNotInDb() {
-        when(userService.findByUsername(anyString())).thenThrow(new UsernameNotFoundException(""));
+        when(userService.findEntityByUsername(anyString())).thenThrow(new UsernameNotFoundException(""));
 
         assertTrue(usernameValidator.validate("aaa").isEmpty());
         assertTrue(usernameValidator.validate("aaaaaaaaaaaaaaaa").isEmpty());
