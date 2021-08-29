@@ -5,7 +5,7 @@ spring:
     password: ${JDBC_DATABASE_PASSWORD:31032000}
     driver-class-name: org.postgresql.Driver
   flyway:
-    url: jdbc:postgresql://${JDBC_DATABASE_URL:localhost:5432/auth_service}
+    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/auth_service}
     user: ${JDBC_DATABASE_USERNAME:postgres}
     password: ${JDBC_DATABASE_PASSWORD:31032000}
 
