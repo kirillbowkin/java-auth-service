@@ -1,11 +1,11 @@
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/auth_service}
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/auth_service}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
     password: ${SPRING_DATASOURCE_PASSWORD:31032000}
     driver-class-name: org.postgresql.Driver
   flyway:
-    url: jdbc:postgresql://${SPRING_DATASOURCE_URL:localhost:5432/auth_service}
+    url: jdbc:postgresql://${DATABASE_URL:localhost:5432/auth_service}
     user: ${SPRING_DATASOURCE_USERNAME:postgres}
     password: ${SPRING_DATASOURCE_PASSWORD:31032000}
 
