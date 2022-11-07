@@ -1,2 +1,2 @@
-# mi-auth-service
-Math injection authentication service
+# Java-auth-service
+Java spring authentication service
